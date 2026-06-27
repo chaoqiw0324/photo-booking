@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>约拍工作室</title>
+<style>
+/* ============================================================
+   🎨 数据配置区 —— 改内容只需改下面 <script> 里的 DATA 对象
+   这里是样式，一般不需要动
+   ============================================================ */
+:root {
+  --accent: #2c2c2c;
+  --accent-light: #f7f5f2;
+  --green: #34a853;
+  --red: #d93025;
+  --orange: #f29d0e;
+  --radius: 12px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', sans-serif;
+  background: #faf9f7;
+  color: #333;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Header --- */
+.hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+  background: linear-gradient(180deg, #f0ece6 0%, #faf9f7 100%);
+}
+.hero h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+.hero .subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #888;
+}
+.hero .contact-row {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.hero .contact-tag {
+  font-size: 13px;
+  color: #666;
+  background: #fff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+/* --- Tabs --- */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #faf9f7;
+  padding: 12px 20px 0;
+}
+.tab-btn {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  background: none;
+  color: #999;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* --- Section --- */
+.section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--accent);
+}
+.section-desc {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 20px;
+}
+.section.hidden { display: none; }
+
+/* --- Equipment Card --- */
+.equip-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+}
+.equip-card:hover { transform: translateY(-2px); }
+
+.equip-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 14px;
+}
+.equip-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.equip-info { flex: 1; min-width: 0; }
+.equip-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+.equip-spec {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+.equip-status {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.status-available { background: #e6f4ea; color: var(--green); }
+.status-in-use { background: #fef3e0; color: var(--orange); }
+.status-unavailable { background: #fce8e6; color: var(--red); }
+
+/* --- Sample Gallery --- */
+.sample-gallery {
+  display: flex;
+  gap: 4px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+.sample-gallery::-webkit-scrollbar { display: none; }
+.sample-img {
+  width: 140px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  background: #eee;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.sample-img:hover { opacity: 0.85; }
+
+/* --- Film/Paper Cards --- */
+.film-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.film-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.film-card:hover { transform: translateY(-2px); }
+
+.film-cover {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: #eee;
+  display: block;
+}
+.film-body { padding: 14px; }
+.film-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
+.film-type {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+.film-stock-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.film-stock {
+  font-size: 13px;
+  font-weight: 500;
+}
+.stock-ok { color: var(--green); }
+.stock-low { color: var(--orange); }
+.stock-out { color: var(--red); }
+.film-count {
+  font-size: 12px;
+  color: #bbb;
+}
+
+/* --- Gallery Row (film samples) --- */
+.film-samples {
+  display: flex;
+  gap: 4px;
+  padding: 0 14px 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.film-samples::-webkit-scrollbar { display: none; }
+.film-sample-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: #eee;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.film-sample-img:hover { opacity: 0.85; }
+
+/* --- Lightbox --- */
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+.lightbox.show { display: flex; }
+.lightbox img {
+  max-width: 92vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+/* --- Footer --- */
+.footer {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 12px;
+  color: #ccc;
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .hero h1 { font-size: 22px; }
+  .sample-img { width: 120px; height: 150px; }
+  .film-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tab-btn { padding: 10px 16px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="预览">
+</div>
+
+<script>
+// ============================================================
+// 📷 数据配置区 —— 改这里就行！
+// ============================================================
+
+const DATA = {
+  // --- 基本信息 ---
+  studioName: "CHAOQI's Studio",
+  subtitle: "朋友约拍 · 记录美好瞬间",
+  contacts: [
+    { label: "微信: your_wechat_id" },
+    { label: "📍 上海" }
+  ],
+
+  // --- 器材列表 ---
+  // status: "available" | "in-use" | "unavailable"
+  // icon: 用 emoji 即可
+  // samples: 客片地址数组，可以用本地路径如 "photos/xxx.jpg"，也可以用外链
+  equipment: [
+    {
+      icon: "📷",
+      name: "Sony A7M4",
+      spec: "全画幅微单 / 3300万像素",
+      status: "available",
+      samples: [
+        "https://images.unsplash.com/photo-1519741497674-611481863552?w=400",
+        "https://images.unsplash.com/photo-1529635324707-1321e6e63958?w=400",
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400"
+      ]
+    },
+    {
+      icon: "📷",
+      name: "Fujifilm X-T5",
+      spec: "APS-C / 4020万像素 / 复古胶片色彩",
+      status: "available",
+      samples: [
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400"
+      ]
+    },
+    {
+      icon: "🔭",
+      name: "Sony 85mm f/1.4 GM",
+      spec: "人像定焦 / 奶油虚化",
+      status: "available",
+      samples: [
+        "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400",
+        "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400"
+      ]
+    },
+    {
+      icon: "🔭",
+      name: "Sigma 35mm f/1.4 Art",
+      spec: "人文/环境人像",
+      status: "in-use",
+      samples: [
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400"
+      ]
+    },
+    {
+      icon: "💡",
+      name: "Godox AD200Pro",
+      spec: "外拍闪光灯 / TTL",
+      status: "available",
+      samples: []
+    }
+  ],
+
+  // --- 相纸/胶片库存 ---
+  // stock: 数量，0 = 缺货（仍然展示，显示「暂无库存」）
+  // cover: 封面图（用该相纸拍的客片）
+  // samples: 更多客片
+  films: [
+    {
+      name: "Fujifilm Instax Mini",
+      type: "拍立得 · 白边经典款",
+      stock: 36,
+      cover: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400",
+      samples: [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=200",
+        "https://images.unsplash.com/photo-1519741497674-611481863552?w=200"
+      ]
+    },
+    {
+      name: "Polaroid 600",
+      type: "宝丽来 · 经典方框",
+      stock: 8,
+      cover: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400",
+      samples: [
+        "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=200"
+      ]
+    },
+    {
+      name: "Instax Wide",
+      type: "拍立得 · 宽幅",
+      stock: 0,
+      cover: "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=400",
+      samples: [
+        "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=200"
+      ]
+    },
+    {
+      name: "Instax Square",
+      type: "拍立得 · 方形",
+      stock: 20,
+      cover: "https://images.unsplash.com/photo-1554080353-a576cf803bda?w=400",
+      samples: [
+        "https://images.unsplash.com/photo-1554080353-a576cf803bda?w=200",
+        "https://images.unsplash.com/photo-1529635324707-1321e6e63958?w=200"
+      ]
+    },
+    {
+      name: "Kodak Portra 400",
+      type: "135胶卷 · 36张",
+      stock: 3,
+      cover: "https://images.unsplash.com/photo-1495745966610-2a67f2297e5e?w=400",
+      samples: [
+        "https://images.unsplash.com/photo-1495745966610-2a67f2297e5e?w=200"
+      ]
+    },
+    {
+      name: "Fujifilm 业务用 100",
+      type: "135胶卷 · 36张",
+      stock: 5,
+      cover: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400",
+      samples: []
+    }
+  ]
+};
+
+// ============================================================
+// 🔧 渲染逻辑（一般不需要改）
+// ============================================================
+
+let currentTab = 'equipment';
+
+function statusLabel(s) {
+  const map = {
+    'available':   ['可预约', 'status-available'],
+    'in-use':      ['使用中', 'status-in-use'],
+    'unavailable': ['不可用', 'status-unavailable']
+  };
+  const [text, cls] = map[s] || ['—', ''];
+  return `<span class="equip-status ${cls}">${text}</span>`;
+}
+
+function stockLabel(n) {
+  if (n === 0) return ['暂无库存', 'stock-out'];
+  if (n <= 5)  return [`剩 ${n} 份`, 'stock-low'];
+  return [`有货 (${n})`, 'stock-ok'];
+}
+
+function renderSamples(imgs, cls = 'sample-img') {
+  if (!imgs || imgs.length === 0) return '';
+  return imgs.map(src =>
+    `<img class="${cls}" src="${src}" alt="客片" loading="lazy" onclick="openLightbox('${src.replace(/w=\d+/, 'w=1200')}')" onerror="this.style.display='none'">`
+  ).join('');
+}
+
+function renderEquipment() {
+  return DATA.equipment.map(e => `
+    <div class="equip-card">
+      <div class="equip-header">
+        <div class="equip-icon">${e.icon}</div>
+        <div class="equip-info">
+          <div class="equip-name">${e.name}</div>
+          <div class="equip-spec">${e.spec}</div>
+        </div>
+        ${statusLabel(e.status)}
+      </div>
+      ${e.samples.length ? `<div class="sample-gallery">${renderSamples(e.samples)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderFilms() {
+  return DATA.films.map(f => {
+    const [stockText, stockCls] = stockLabel(f.stock);
+    return `
+      <div class="film-card">
+        <img class="film-cover" src="${f.cover}" alt="${f.name}" loading="lazy"
+             onclick="openLightbox('${f.cover.replace(/w=\d+/, 'w=1200')}')"
+             onerror="this.style.background='#ddd'">
+        <div class="film-body">
+          <div class="film-name">${f.name}</div>
+          <div class="film-type">${f.type}</div>
+          <div class="film-stock-row">
+            <span class="film-stock ${stockCls}">${stockText}</span>
+            ${f.stock > 0 ? `<span class="film-count">${f.stock} 张/盒</span>` : ''}
+          </div>
+        </div>
+        ${f.samples.length ? `<div class="film-samples">${renderSamples(f.samples, 'film-sample-img')}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function render() {
+  document.getElementById('app').innerHTML = `
+    <div class="hero">
+      <h1>${DATA.studioName}</h1>
+      <div class="subtitle">${DATA.subtitle}</div>
+      <div class="contact-row">
+        ${DATA.contacts.map(c => `<span class="contact-tag">${c.label}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn ${currentTab === 'equipment' ? 'active' : ''}" onclick="switchTab('equipment')">📷 器材</button>
+      <button class="tab-btn ${currentTab === 'films' ? 'active' : ''}" onclick="switchTab('films')">🎞️ 相纸/胶卷</button>
+    </div>
+
+    <div class="section ${currentTab !== 'equipment' ? 'hidden' : ''}" id="sec-equipment">
+      <div class="section-title">拍摄器材</div>
+      <div class="section-desc">点击客片可放大查看 · 器材状态实时更新</div>
+      ${renderEquipment()}
+    </div>
+
+    <div class="section ${currentTab !== 'films' ? 'hidden' : ''}" id="sec-films">
+      <div class="section-title">相纸 & 胶卷库存</div>
+      <div class="section-desc">缺货的相纸仍可查看往期客片效果</div>
+      <div class="film-grid">
+        ${renderFilms()}
+      </div>
+    </div>
+
+    <div class="footer">
+      © ${new Date().getFullYear()} ${DATA.studioName} · 仅限朋友圈约拍
+    </div>
+  `;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  render();
+  window.scrollTo({ top: document.querySelector('.tabs').offsetTop - 10, behavior: 'smooth' });
+}
+
+function openLightbox(src) {
+  event.stopPropagation();
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('show');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+  document.getElementById('lightboxImg').src = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+render();
+</script>
+</body>
+</html>
