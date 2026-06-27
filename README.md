@@ -1,5 +1,7 @@
 # 摄影约拍网页
 
+**线上地址：** https://chaoqiw0324.github.io/photo-booking/
+
 ## 本地预览
 直接双击 `index.html` 在浏览器中打开即可。
 
